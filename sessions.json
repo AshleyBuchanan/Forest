@@ -1,0 +1,24 @@
+{
+  "Sessions": [
+    {
+      "s_uuid": "8099505a-bc2a-4104-b627-2514f4e8e7f4",
+      "u_uuid": "662a2c77-0d16-4ccb-ab8e-ccb2f1b870b2"
+    },
+    {
+      "s_uuid": "599dd0a8-53cb-488c-a082-635f5512f198",
+      "u_uuid": "662a2c77-0d16-4ccb-ab8e-ccb2f1b870b2"
+    },
+    {
+      "s_uuid": "04ca4c5a-66c7-4fd8-8d66-b7e0d0e8dd3f",
+      "u_uuid": "662a2c77-0d16-4ccb-ab8e-ccb2f1b870b2"
+    },
+    {
+      "s_uuid": "bc7d15cc-369a-457f-bfd1-363a60875f6f",
+      "u_uuid": "662a2c77-0d16-4ccb-ab8e-ccb2f1b870b2"
+    },
+    {
+      "s_uuid": "53252c3c-e5e1-4880-89bf-45886236e147",
+      "u_uuid": "662a2c77-0d16-4ccb-ab8e-ccb2f1b870b2"
+    }
+  ]
+}

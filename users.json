@@ -1,0 +1,56 @@
+{
+  "Users": [
+    {
+      "email": "fakeemail@gmail.com",
+      "username": "fakeMcFakie",
+      "password": "1234",
+      "comments": [],
+      "uuid": "8dd12486-2c6c-40e3-8858-84a29a84a1c3",
+      "versions": [],
+      "accessTimes": [
+        "2024-12-12 18:18"
+      ],
+      "loggedOn": false
+    },
+    {
+      "email": "ashleyshanebuchanan@gmail.com",
+      "username": "ashleyRocks",
+      "password": "blablabla",
+      "comments": [],
+      "uuid": "880ff6d3-8e0b-45e3-a384-63d1be16f19f",
+      "versions": [],
+      "accessTimes": [
+        "2024-12-16 09:28"
+      ],
+      "loggedOn": false
+    },
+    {
+      "email": "jas.jawanda25@gmail.com",
+      "username": "MeriJaan",
+      "password": "jaan",
+      "comments": [],
+      "uuid": "662a2c77-0d16-4ccb-ab8e-ccb2f1b870b2",
+      "versions": [],
+      "accessTimes": [
+        "2024-12-22 17:33",
+        "2024-12-23 08:54",
+        "2024-12-23 08:58",
+        "2024-12-23 08:59",
+        "2024-12-23 08:59"
+      ],
+      "loggedOn": true
+    },
+    {
+      "email": "markymark@funkybunch.com",
+      "username": "Walburg",
+      "password": "pumpup",
+      "comments": [],
+      "uuid": "fee335c5-59bc-4f1a-a74a-7822312edc52",
+      "versions": [],
+      "accessTimes": [
+        "2024-12-17 19:55"
+      ],
+      "loggedOn": false
+    }
+  ]
+}

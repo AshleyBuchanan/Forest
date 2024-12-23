@@ -1,0 +1,42 @@
+<div class="container">
+    <nav id="navbar" class="navbar fixed-top navbar-expand-sm">
+        <a class="navbar-brand my-2 my-sm-0" href="/topics/index">
+            <img src="/a_leaf.png" width="60" height="60" class="d-inline-block align-top" alt="" loading="lazy">
+        </a>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a id="new-topic-link" class="nav-link" href="/topics/new">New Topic <span class="sr-only">(current)</span></a>
+            </li>
+ 
+        </ul>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span id="hamburger" class="bi bi-list"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                </li> -->
+            </ul>
+            <ul class="navbar-nav my-2">
+                <li class="nav-item search-li">
+                    <input name="search" type="search" class="form-control" id="search" placeholder="search for a topic...">
+                </li>
+                <li class="nav-item">
+                    <a id="sign-in-link" class="nav-link my-2 my-sm-0" href="/topics/signin">Sign In</a>
+                </li>
+                <li class="nav-item">
+                    <% try { %>
+                        <a id="sign-out-link" class="nav-link my-2 my-sm-0" href="/topics/signout/<%= username %>">Sign Out</a>
+                    <% } catch { %>
+                        <a id="sign-out-link" class="nav-link my-2 my-sm-0" href="/topics/signout/">Sign Out</a>
+                    <% } %>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
