@@ -4,7 +4,7 @@ const signInLink = document.querySelector('#sign-in-link');
 const signOutLink = document.querySelector('#sign-out-link');
 const newTopicLink = document.querySelector('#new-topic-link');
 
-let signinWrapper, topicsRow, allpageWrapper, subRow1Wrapper;
+let signinWrapper, topicsRow;
 
 let postTitles;
 
@@ -62,6 +62,29 @@ const checkForOpacity = () => {
             signinWrapper.classList.remove('hide-link');
         }
 }
+
+const sendRequest = () => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('post', `/topics/single`);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send( JSON.stringify({uuid: postGroup.lastChild.innerText}) );
+    xhr.onload = () => {
+        const response1 = xhr.status == 200 ? JSON.parse(xhr.responseText) : 'error';
+        subRow1Age.innerText = response1.age;
+        subRow1Title.innerText = response1.title;
+        subRow1Posting.innerText = response1.posting;
+        subRow1Username.innerText = '- '+response1.username;
+        const topicRowBox = document.querySelector('.row-1');
+        const topicBox = document.querySelector('.single-wrapper');
+        const topicBox_computedStyle = window.getComputedStyle(topicBox);
+        const topicRowBox_computedStyle = window.getComputedStyle(topicRowBox);
+        //console.log(topicRowBox_computedStyle.height);
+        topicBox.style.height = topicRowBox_computedStyle.height;
+        console.log(topicBox.style.height);
+        console.log(topicBox_computedStyle.height);
+    }
+}
+
 
 setInterval(() => {
     showCurrentPage();
@@ -217,81 +240,84 @@ const allPage = () => {
         newTopicLink.classList.remove('hide-link');
 
         
-        topicsRow               = new makeElement('div', 'row');
-        const topicsCol1        = new makeElement('div', 'col-5');
-        const topicsCol2        = new makeElement('div', 'col-7');
-        const subRow1           = new makeElement('div', 'row-3');
-        const subRow2           = new makeElement('div', 'row-3');
-        const subRow3           = new makeElement('div', 'row-3');
-        const subRow4           = new makeElement('div', 'row-3');
-        allpageWrapper          = new makeElement('div', 'all-wrapper');
-        subRow1Wrapper          = new makeElement('div', 'single-wrapper');
-        const subRow1Age        = new makeElement('div', 'text-center', 'selectable');
-        const subRow1Title      = new makeElement('h4',  'text-center', 'selectable');
-        const subRow1Posting    = new makeElement('div', 'text-center', 'selectable');
-        const subRow1Username   = new makeElement('div', 'text-center', 'selectable');
-        const subRow2Control    = new makeElement('div', 'single-control-wrapper');
-        const subRow3Categories = new makeElement('div', 'category-wrapper');
-        const subRow4Control    = new makeElement('div', 'category-control-wrapper');
-        const postRow           = new makeElement('div', 'row');
-        const postCol1          = new makeElement('div', 'col');
- 
+        topicsRow                                   = new makeElement('div', 'row');
+            const topicsCol1                        = new makeElement('div', 'col-3', 'column-full');
+                const allpageWrapper                = new makeElement('div', 'all-wrapper');
+                    const postRow                   = new makeElement('div', 'row');
+                        const postCol1              = new makeElement('div', 'col');
+            const topicsCol2                        = new makeElement('div', 'col-6', 'column-full');
+                const subRow1                       = new makeElement('div', 'row-1');
+                    const subRow1Wrapper            = new makeElement('div', 'single-wrapper');
+                        const splitRowA             = new makeElement('div', null, 'selectable');
+                            const subRow1Age        = new makeElement('div', null, 'selectable');
+                        const splitRowB             = new makeElement('div', 'split-row-B', 'selectable')
+                            const subRow1Title      = new makeElement('h4',  'text-center', 'selectable');
+                            const subRow1Posting    = new makeElement('div', 'text-justify', 'selectable');
+                        const splitRowC             = new makeElement('div', null, 'selectable')
+                            const subRow1Username   = new makeElement('div', null, 'selectable');
+                const subRow2                       = new makeElement('div', 'row-3');
+                    const subRow2Control            = new makeElement('div', 'single-control-wrapper');
+                const subRow3                       = new makeElement('div', 'row-3');
+                    const subRow3Categories         = new makeElement('div', 'category-wrapper');
+                const subRow4                       = new makeElement('div', 'row-3');
+                const subRow4Control                = new makeElement('div', 'category-control-wrapper');
+            const topicsCol3                        = new makeElement('div', 'col-3', 'column-full');
+                const allpageWrapper2               = new makeElement('div', 'all-wrapper');
 
         topicsRow.classList.add('lock-row');
-        topicsCol1.classList.add('pr-0');
-        topicsCol2.classList.add('pr-0');
-        subRow1Age.classList.add('card-header');
-        subRow1Title.classList.add('card-title', 'mt-2');
-        subRow1Username.classList.add('card-footer', 'mt-2', 'my-text-muted');
+            topicsCol1.classList.add('p-0');
+                allpageWrapper.classList.add('wrappers');
+            topicsCol2.classList.add('p-0');
+                subRow1Wrapper.classList.add('wrappers');
+                    subRow1Age.classList.add('card-header');
+                    subRow1Title.classList.add('card-title', 'mt-2');
+                    subRow1Posting.classList.add('text-justify');
+                    subRow1Username.classList.add('card-footer', 'mt-2', 'my-text-muted', 'text-right');
+                    subRow3Categories.classList.add('wrappers');
+            topicsCol3.classList.add('p-0');
+                allpageWrapper2.classList.add('wrappers');
 
-        page.append(topicsRow)
-        topicsRow.append(topicsCol1);
-        topicsRow.append(topicsCol2);
-        topicsCol1.append(allpageWrapper);
-        topicsCol2.append(subRow1);
-        topicsCol2.append(subRow2);
-        topicsCol2.append(subRow3);
-        topicsCol2.append(subRow4);
-        subRow1.append(subRow1Wrapper);
-        subRow2.append(subRow2Control);
-        subRow3.append(subRow3Categories);
-        subRow4.append(subRow4Control);
-        subRow1Wrapper.append(subRow1Age);
-        subRow1Wrapper.append(subRow1Title);
-        subRow1Wrapper.append(subRow1Posting);
-        subRow1Wrapper.append(subRow1Username);
-        // allpageWrapper.append(formNameHolder);
-        // formNameHolder.append(formName);
-        allpageWrapper.append(postRow);
-        postRow.append(postCol1);
-        //postRow.append(postCol2);
-        // postRow.append(postCol3);
-
-
+        page.append(topicsRow);
+            topicsRow.append(topicsCol1);
+                topicsCol1.append(allpageWrapper);
+                    allpageWrapper.append(postRow);
+                        postRow.append(postCol1);
+            topicsRow.append(topicsCol2);
+                topicsCol2.append(subRow1);
+                    subRow1.append(subRow1Wrapper);
+                        subRow1Wrapper.append(splitRowA);
+                            splitRowA.append(subRow1Age);
+                        subRow1Wrapper.append(splitRowB);
+                            splitRowB.append(subRow1Title);
+                            splitRowB.append(subRow1Posting);
+                        subRow1Wrapper.append(splitRowC);
+                            splitRowC.append(subRow1Username);
+                topicsCol2.append(subRow2);
+                    subRow2.append(subRow2Control);
+                topicsCol2.append(subRow3);
+                    subRow3.append(subRow3Categories);
+                topicsCol2.append(subRow4);
+                    subRow4.append(subRow4Control);
+            topicsRow.append(topicsCol3);
+                topicsCol3.append(allpageWrapper2);
+ 
+        let increment = 0;    
         for (let i=0; i<=2; i++){
             for (let post of postTitles){
                 const postGroup        = new makeElement('div', 'form-group', 'topic-group');
                 const posttitle        = new makeElement('span', null, 'selectable');
                 const postUUID         = new makeElement('div', 'hide-link', null, post.uuid);
-                //const postSmall        = new makeElement('span', 'form-text', null, '- ' + post.username);
-                //postSmall.classList.add('text-right');
+
                 posttitle.style = "display: flex; justify-content: space-between; align-items: center;"
                 posttitle.innerHTML = `${post.title} <span style="margin-left: auto; font-weight: normal;"><b>${post.username}</b></div>`;
-                posttitle.classList.add('mx-2')
-                //console.log(`'${posttitle.innerHTML}'`)
-                // switch(i<=8){
-                    // case true:
-                        postCol1.append(postGroup);
-                        // break;
-                    // case false:
-                        // postCol3.append(postGroup);
-                        // break;
-                // }
+                posttitle.classList.add('mx-2');
+                
+                postCol1.append(postGroup);
                 postGroup.append(posttitle);
                 postGroup.append(postUUID);
-                //posttitle.append(postSmall);
 
-                postGroup.addEventListener('click', () => {
+                if (increment===0){
+                    postGroup.classList.add('selected');
                     console.log(postGroup.lastChild.innerText);
                     const xhr = new XMLHttpRequest();
                     xhr.open('post', `/topics/single`);
@@ -302,22 +328,40 @@ const allPage = () => {
                         subRow1Age.innerText = response1.age;
                         subRow1Title.innerText = response1.title;
                         subRow1Posting.innerText = response1.posting;
-                        subRow1Username.innerText = response1.username;
+                        subRow1Username.innerText = '- '+response1.username;
+                    }
+                }
 
-                        //response1.username;
-                        // postTitles = response1;
-                        // on_page = 'all'
-                        // rendered = false;
-                        // signinWrapper.style.opacity = '0%';
+                postGroup.addEventListener('click', () => {
+                    const postGroups = document.querySelectorAll('#topic-group');
+                    for (let pG of postGroups){
+                        pG.classList.remove('selected');
+                    }
+                    postGroup.classList.add('selected');
+                    console.log(postGroup.lastChild.innerText);
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('post', `/topics/single`);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send( JSON.stringify({uuid: postGroup.lastChild.innerText}) );
+                    xhr.onload = () => {
+                        const response1 = xhr.status == 200 ? JSON.parse(xhr.responseText) : 'error';
+                        subRow1Age.innerText = response1.age;
+                        subRow1Title.innerText = response1.title;
+                        subRow1Posting.innerText = response1.posting;
+                        subRow1Username.innerText = '- '+response1.username;
+                        // const topicRowBox = document.querySelector('.row-1');
+                        // const topicBox = document.querySelector('.single-wrapper');
+                        // const topicBox_computedStyle = window.getComputedStyle(topicBox);
+                        // const topicRowBox_computedStyle = window.getComputedStyle(topicRowBox);
+                        //console.log(topicRowBox_computedStyle.height);
+                        // topicBox.style.height = topicRowBox_computedStyle.height;
+                        // console.log(topicBox.style.height);
+                        // console.log(topicBox_computedStyle.height);
                     }
                 });
+                increment++;
             }
-    
         }
- 
-
- 
-
 
         allpageWrapper.style.opacity = '0%';
         setTimeout(()=>{
@@ -328,6 +372,5 @@ const allPage = () => {
         }, 1500);
 
         rendered = true;
-
     }
 }
