@@ -161,7 +161,7 @@ app.post('/topics/all', (req, res) => {
 app.post('/topics/single', (req, res) => {
     console.log('-', req.body.uuid);
     let topic = topics.Topics.find( u => u.uuid === req.body.uuid);
-    topic.age = getAge(topic.postTime);
+    topic.age = getAge(topic.postTime); //remember to nullify topic.age before saving mods!
     
     res.json(topic);
 });

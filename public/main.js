@@ -7,11 +7,19 @@ const newTopicLink = document.querySelector('#new-topic-link');
 let signinWrapper, topicsRow;
 
 let postTitles;
+let inc=0;
+let intervalTime = 200;
 
 let loggedUser = {};
 let on_page = 'signin';
 let ready = true;
 let rendered = false;
+
+const intervals = [];
+let movementDetected = true; // Indicates if movement is still occurring
+let movementThreshold = 8; // Minimum movement in pixels to consider it "moving"
+let stillFrames = 0; // Number of consecutive frames with no significant movement
+const maxStillFrames = 5; // Number of frames to confirm "I'm done"
 
 class makeElement{
     constructor(_element, _classList, _option, _innerText, _required=false){
@@ -85,11 +93,98 @@ const sendRequest = () => {
     }
 }
 
+function moveAwayFromOverlaps(container, divs) {
+    buffer = 20;
+    let new_intervalTime;
+    let totalMovement = 0;
 
-setInterval(() => {
-    showCurrentPage();
-    checkForOpacity();
-}, 200);
+    divs.forEach((div1, i) => {
+        let dx = 0, dy = 0;
+
+        divs.forEach((div2, j) => {
+            if (i !== j) {
+                // Get positions and dimensions
+                const rect1 = div1.getBoundingClientRect();
+                const rect2 = div2.getBoundingClientRect();
+                
+                // Check for overlap
+                if (
+                    rect1.left < rect2.right + buffer &&
+                    rect1.right + buffer > rect2.left &&
+                    rect1.top < rect2.bottom + buffer &&
+                    rect1.bottom + buffer > rect2.top
+                ) {
+ 
+                    // Calculate the vector to move div1 away from div2
+                    const overlapX = Math.min(
+                        rect1.right - rect2.left + buffer,
+                        rect2.right - rect1.left + buffer
+                    );
+                    const overlapY = Math.min(
+                        rect1.bottom - rect2.top + buffer,
+                        rect2.bottom - rect1.top + buffer
+                    );
+
+                    // Push div1 away in both directions
+                    if (overlapX < overlapY) {
+                        dx += (rect1.left < rect2.left ? -overlapX : overlapX)*.1;
+                    } else {
+                        dy += (rect1.top < rect2.top ? -overlapY : overlapY)*.1;
+                    }
+                }
+            }
+        });
+
+        // Apply the movement to div1
+        const newLeft = Math.min(
+            Math.max(0, div1.offsetLeft + dx), 
+            container.offsetWidth - div1.offsetWidth
+        );
+        const newTop = Math.min(
+            Math.max(0, div1.offsetTop + dy), 
+            container.offsetHeight - div1.offsetHeight
+        );
+
+        totalMovement += Math.abs(dx) + Math.abs(dy);
+        div1.style.left = `${newLeft}px`;
+        div1.style.top = `${newTop}px`;
+    });
+
+    // Check if total movement is below the threshold
+    if (totalMovement < movementThreshold) {
+        stillFrames++;
+        if (stillFrames >= maxStillFrames) {
+            movementDetected = false;
+            //console.log("I'm done!"); // Action when movement halts
+            new_intervalTime = 200;
+        }
+    } else {
+        stillFrames = 0; // Reset still frames if movement occurs
+        movementDetected = true;
+        new_intervalTime = 20;
+    }
+
+    if(new_intervalTime!=intervalTime){
+        console.log('changed')
+        const old = intervals.pop();
+        clearInterval(old);
+        restartIntervalAt(new_intervalTime);
+        intervalTime = new_intervalTime;
+    }
+}
+
+function restartIntervalAt(msecs){
+    console.log('restarting at:', msecs)
+    const i = setInterval(() => {
+        showCurrentPage();
+        checkForOpacity();
+        console.log('tic');
+    }, msecs);
+
+    intervals.push(i);
+}
+restartIntervalAt(200);
+
 
 const signinPage = () => {
     if (rendered===false){
@@ -238,9 +333,8 @@ const allPage = () => {
         signInLink.classList.add('hide-link');
         signOutLink.classList.remove('hide-link');
         newTopicLink.classList.remove('hide-link');
-
         
-        topicsRow                                   = new makeElement('div', 'row');
+        topicsRow                                   = new makeElement('div', 'row', 'fadable');
             const topicsCol1                        = new makeElement('div', 'col-3', 'column-full');
                 const allpageWrapper                = new makeElement('div', 'all-wrapper');
                     const postRow                   = new makeElement('div', 'row');
@@ -259,23 +353,27 @@ const allPage = () => {
                     const subRow2Control            = new makeElement('div', 'single-control-wrapper');
                 const subRow3                       = new makeElement('div', 'row-3');
                     const subRow3Categories         = new makeElement('div', 'category-wrapper');
+                        //here
                 const subRow4                       = new makeElement('div', 'row-3');
                 const subRow4Control                = new makeElement('div', 'category-control-wrapper');
             const topicsCol3                        = new makeElement('div', 'col-3', 'column-full');
                 const allpageWrapper2               = new makeElement('div', 'all-wrapper');
+        
+        topicsRow.style.opacity = '0%';
 
         topicsRow.classList.add('lock-row');
             topicsCol1.classList.add('p-0');
-                allpageWrapper.classList.add('wrappers');
+                allpageWrapper.classList.add('wrappers', 'wrappers-overflow');
             topicsCol2.classList.add('p-0');
-                subRow1Wrapper.classList.add('wrappers');
+                subRow1Wrapper.classList.add('wrappers', 'wrappers-overflow');
                     subRow1Age.classList.add('card-header');
                     subRow1Title.classList.add('card-title', 'mt-2');
                     subRow1Posting.classList.add('text-justify');
                     subRow1Username.classList.add('card-footer', 'mt-2', 'my-text-muted', 'text-right');
                     subRow3Categories.classList.add('wrappers');
+                    subRow3Categories.classList.add('button-container');
             topicsCol3.classList.add('p-0');
-                allpageWrapper2.classList.add('wrappers');
+                allpageWrapper2.classList.add('wrappers', 'wrappers-overflow');
 
         page.append(topicsRow);
             topicsRow.append(topicsCol1);
@@ -300,7 +398,9 @@ const allPage = () => {
                     subRow4.append(subRow4Control);
             topicsRow.append(topicsCol3);
                 topicsCol3.append(allpageWrapper2);
- 
+            
+        const categoryHolder = document.querySelector('.button-container');
+
         let increment = 0;    
         for (let i=0; i<=2; i++){
             for (let post of postTitles){
@@ -316,6 +416,9 @@ const allPage = () => {
                 postGroup.append(posttitle);
                 postGroup.append(postUUID);
 
+                //this is only for preloading the first topic
+                //will refactor later. I know. I know...
+                //duplicated code :/
                 if (increment===0){
                     postGroup.classList.add('selected');
                     console.log(postGroup.lastChild.innerText);
@@ -329,6 +432,30 @@ const allPage = () => {
                         subRow1Title.innerText = response1.title;
                         subRow1Posting.innerText = response1.posting;
                         subRow1Username.innerText = '- '+response1.username;
+
+                        for (let category of response1.categories){
+                            const categoryGroup = new makeElement('div', null, 'category-group');
+                            const categorytitle = new makeElement('span', null, 'selectable');
+                            
+                            categoryGroup.classList.add('.random-button');
+
+                            // Set random positions
+                            const width  = categoryHolder.offsetWidth  - 120 - 80;
+                            const height = categoryHolder.offsetHeight - 60  - 40;
+
+                            const randomX = Math.random() * (width*.5)  + width  *.5; // Assuming button width ~80px
+                            const randomY = Math.random() * (height*.5) + height *.5; // Assuming button height ~40px
+
+
+                            subRow3Categories.appendChild(categoryGroup);
+                            categoryGroup.append(categorytitle);
+                            categorytitle.innerText = category;
+
+                            categoryGroup.style.position = 'absolute';
+                            categoryGroup.style.left = `${randomX}px`;
+                            categoryGroup.style.top = `${randomY}px`;
+                        
+                        }
                     }
                 }
 
@@ -349,23 +476,37 @@ const allPage = () => {
                         subRow1Title.innerText = response1.title;
                         subRow1Posting.innerText = response1.posting;
                         subRow1Username.innerText = '- '+response1.username;
-                        // const topicRowBox = document.querySelector('.row-1');
-                        // const topicBox = document.querySelector('.single-wrapper');
-                        // const topicBox_computedStyle = window.getComputedStyle(topicBox);
-                        // const topicRowBox_computedStyle = window.getComputedStyle(topicRowBox);
-                        //console.log(topicRowBox_computedStyle.height);
-                        // topicBox.style.height = topicRowBox_computedStyle.height;
-                        // console.log(topicBox.style.height);
-                        // console.log(topicBox_computedStyle.height);
+
+                        for (let category of response1.categories){
+                            const categoryGroup = new makeElement('div', null, 'category-group');
+                            const categorytitle = new makeElement('span', null, 'selectable');
+                            
+                            categoryGroup.classList.add('.random-button');
+                            
+                            // Set random positions
+                            const width  = categoryHolder.offsetWidth  - 120 - 80;
+                            const height = categoryHolder.offsetHeight - 60  - 40;
+
+                            const randomX = Math.random() * (width*.5)  + width  *.5; // Assuming button width ~80px
+                            const randomY = Math.random() * (height*.5) + height *.5; // Assuming button height ~40px
+
+                            subRow3Categories.append(categoryGroup);
+                            categoryGroup.append(categorytitle);
+                            categorytitle.innerText = category;
+
+                            categoryGroup.style.position = 'absolute';
+                            categoryGroup.style.left = `${randomX}px`;
+                            categoryGroup.style.top = `${randomY}px`;
+
+                        }
                     }
                 });
                 increment++;
             }
         }
 
-        allpageWrapper.style.opacity = '0%';
         setTimeout(()=>{
-            allpageWrapper.style.opacity = '100%'
+            topicsRow.style.opacity = '100%'
         }, 500);
         setTimeout(()=>{
             //emailInput.focus();
@@ -373,4 +514,16 @@ const allPage = () => {
 
         rendered = true;
     }
+    const categoryWrapper = document.querySelector('.category-wrapper');
+    const categoryGroups  = Array.from(document.querySelectorAll('#category-group'));
+    if (categoryGroups.length>0 && categoryWrapper!=undefined){
+        moveAwayFromOverlaps(categoryWrapper, categoryGroups);
+
+            if(inc<1){
+                //console.log(`${categoryGroup.textContent} x:${x}, width:${xWidth}   y:${y}, height:${yHeight}`);
+            }
+        
+        inc++;
+    }
+
 }
